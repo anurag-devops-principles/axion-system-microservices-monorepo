@@ -18,6 +18,12 @@ variable "dns_prefix" {
   type        = string
 }
 
+variable "node_resource_group_name" {
+  description = "The name of the resource group to create the node resources in."
+  type        = string
+  default     = null
+}
+
 variable "default_node_pool_name" {
   description = "The name of the default node pool."
   type        = string
