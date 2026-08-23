@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axion-ingestion-service-deployment
+  namespace: axion-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: axion-ingestion-service
+  template:
+    metadata:
+      labels:
+        app: axion-ingestion-service
+    spec:
+      containers:
+        - name: axion-ingestion-service
+          image: devaxionsystemacr.azurecr.io/axion-ingestion-service:v3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000

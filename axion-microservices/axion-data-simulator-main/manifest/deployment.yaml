@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axion-data-simulator-deployment
+  namespace: axion-system
+spec:
+  selector:
+    matchLabels:
+      app: axion-data-simulator
+  template:
+    metadata:
+      labels:
+        app: axion-data-simulator
+    spec:
+      containers:
+      - name: axion-data-simulator
+        image: devaxionsystemacr.azurecr.io/axion-data-simulator:v1

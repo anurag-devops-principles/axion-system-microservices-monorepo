@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: axion-ingestion-service-svc
+  namespace: axion-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: axion-ingestion-service
+  ports:
+  - port: 80
+    targetPort: 8000
