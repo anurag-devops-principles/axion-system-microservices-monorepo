@@ -1,5 +1,5 @@
 output "resource_group_id" {
-  value = module.azurerm_resource_group.resource_group_ids
+  value = module.azurerm_resource_group.resource_group
 }
 
 output "container_registry" {
@@ -11,5 +11,5 @@ output "kubernetes_cluster" {
 }
 
 output "role_assignment_id" {
-  value = module.azurerm_role_assignment.role_assignment_id
+  value = module.azurerm_role_assignment.role_assignment
 }
