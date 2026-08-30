@@ -24,7 +24,6 @@ module "azurerm_kubernetes_cluster" {
   resource_group_name          = module.azurerm_resource_group.resource_group.name
   location                     = module.azurerm_resource_group.resource_group.location
   dns_prefix                   = "${local.name_prefix}-aks"
-  node_resource_group_name     = "${local.name_prefix}-aks-resources"
   default_node_pool_name       = "default"
   default_node_pool_node_count = 1
   default_node_pool_vm_size    = "Standard_B2s"

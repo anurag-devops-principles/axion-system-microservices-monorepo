@@ -2,6 +2,7 @@ locals {
   environment = "dev"
   application = "axion-system"
   region      = "eastus"
+  managed_by  = "terraform"
 }
 
 locals {
@@ -12,6 +13,6 @@ locals {
   common_tags = {
     "environment" = local.environment
     "application" = local.application
-    "managed-by"  = "terraform"
+    "managed-by"  = local.managed_by
   }
 }

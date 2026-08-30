@@ -44,6 +44,24 @@ variable "default_node_pool_type" {
   type        = string
 }
 
+variable "max_surge" {
+  description = "The maximum number of nodes to add during an upgrade."
+  type        = string
+  default     = "10%"
+}
+
+variable "node_provisioning_profile_default_node_pools" {
+  description = "The default node pools for the node provisioning profile."
+  type        = string
+  default     = "Auto"
+}
+
+variable "node_provisioning_profile_mode" {
+  description = "The mode of the node provisioning profile."
+  type        = string
+  default     = "Manual"
+}
+
 variable "identity_type" {
   description = "The type of identity used for the AKS cluster (e.g., SystemAssigned, UserAssigned, None)."
   type        = string

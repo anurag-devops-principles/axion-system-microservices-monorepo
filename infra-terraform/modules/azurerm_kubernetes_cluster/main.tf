@@ -12,10 +12,13 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     type       = var.default_node_pool_type
 
     upgrade_settings {
-      max_surge                     = "10%"
-      drain_timeout_in_minutes      = 0
-      node_soak_duration_in_minutes = 0
+      max_surge = var.max_surge
     }
+  }
+
+  node_provisioning_profile {
+    default_node_pools = var.node_provisioning_profile_default_node_pools
+    mode = var.node_provisioning_profile_mode
   }
 
   identity {
