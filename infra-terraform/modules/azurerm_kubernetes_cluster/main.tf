@@ -18,7 +18,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
   node_provisioning_profile {
     default_node_pools = var.node_provisioning_profile_default_node_pools
-    mode = var.node_provisioning_profile_mode
+    mode               = var.node_provisioning_profile_mode
   }
 
   identity {

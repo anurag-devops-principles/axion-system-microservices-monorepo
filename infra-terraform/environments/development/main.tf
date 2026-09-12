@@ -6,36 +6,56 @@ module "azurerm_resource_group" {
   tags                = local.common_tags
 }
 
-module "azurerm_container_registry" {
-  source = "../../modules/azurerm_container_registry"
+module "azurerm_virtual_network" {
+  source = "../../modules/azurerm_virtual_network"
 
-  container_registry_name = replace("${local.name_prefix}-acr", "-", "") # Remove hyphens for ACR name
-  resource_group_name     = module.azurerm_resource_group.resource_group.name
-  location                = module.azurerm_resource_group.resource_group.location
-  sku                     = "Standard"
-  admin_enabled           = false
-  tags                    = local.common_tags
+  virtual_network_name = "${local.name_prefix}-vnet"
+  region               = local.region
+  resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
+  address_space        = ["10.10.0.0/16"]
 }
 
-module "azurerm_kubernetes_cluster" {
-  source = "../../modules/azurerm_kubernetes_cluster"
+module "azurerm_subnet" {
+  source = "../../modules/azurerm_subnet"
 
-  aks_cluster_name             = "${local.name_prefix}-aks"
-  resource_group_name          = module.azurerm_resource_group.resource_group.name
-  location                     = module.azurerm_resource_group.resource_group.location
-  dns_prefix                   = "${local.name_prefix}-aks"
-  default_node_pool_name       = "default"
-  default_node_pool_node_count = 1
-  default_node_pool_vm_size    = "Standard_B2s"
-  default_node_pool_type       = "VirtualMachineScaleSets"
-  identity_type                = "SystemAssigned"
-  tags                         = local.common_tags
+  for_each = var.subnets
+
+  subnet_name          = each.value.subnet_name
+  resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
+  address_prefixes     = each.value.address_prefixes
+  virtual_network_name = module.azurerm_virtual_network.virtual_network_ids.name
 }
 
-module "azurerm_role_assignment" {
-  source = "../../modules/azurerm_role_assignment"
+# module "azurerm_container_registry" {
+#   source = "../../modules/azurerm_container_registry"
 
-  scope                = module.azurerm_container_registry.container_registry.id
-  role_definition_name = "ACRPull"
-  principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster.kubelet_object_id
-}
+#   container_registry_name = replace("${local.name_prefix}-acr", "-", "") # Remove hyphens for ACR name
+#   resource_group_name     = module.azurerm_resource_group.resource_group_ids.name
+#   location                = module.azurerm_resource_group.resource_group_ids.location
+#   sku                     = "Standard"
+#   admin_enabled           = false
+#   tags                    = local.common_tags
+# }
+
+# module "azurerm_kubernetes_cluster" {
+#   source = "../../modules/azurerm_kubernetes_cluster"
+
+#   aks_cluster_name             = "${local.name_prefix}-aks"
+#   resource_group_name          = module.azurerm_resource_group.resource_group_ids.name
+#   location                     = module.azurerm_resource_group.resource_group_ids.location
+#   dns_prefix                   = "${local.name_prefix}-aks"
+#   default_node_pool_name       = "default"
+#   default_node_pool_node_count = 1
+#   default_node_pool_vm_size    = "Standard_B2s"
+#   default_node_pool_type       = "VirtualMachineScaleSets"
+#   identity_type                = "SystemAssigned"
+#   tags                         = local.common_tags
+# }
+
+# module "azurerm_role_assignment" {
+#   source = "../../modules/azurerm_role_assignment"
+
+#   scope                = module.azurerm_container_registry.container_registry.id
+#   role_definition_name = "ACRPull"
+#   principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster.kubelet_object_id
+# }
