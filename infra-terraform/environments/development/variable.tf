@@ -17,3 +17,9 @@ variable "subnet-nat-gw" {
   description = "Key of the subnet (from var.subnets) to associate with the NAT gateway (e.g. subnet_1)"
   default     = "subnet_1"
 }
+
+variable "subnet-appgw" {
+  type        = string
+  description = "Key of the subnet (from var.subnets) to associate with the application gateway (e.g. subnet_1)"
+  default     = "subnet_2"
+}

@@ -43,23 +43,23 @@ module "subnet-nsg_association" {
   network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
-module "azurerm_nat_gateway" {
-  source = "../../modules/azurerm_nat_gateway"
+# module "azurerm_nat_gateway" {
+#   source = "../../modules/azurerm_nat_gateway"
 
-  name                = "${local.name_prefix}-nat-gateway"
-  location            = local.region
-  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  tags                = local.common_tags
-}
+#   name                = "${local.name_prefix}-nat-gateway"
+#   location            = local.region
+#   resource_group_name = module.azurerm_resource_group.resource_group_ids.name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+#   tags                = local.common_tags
+# }
 
-module "subnet-nat-gw_association" {
-  source = "../../modules/azurerm_subnet-nat-gw_association"
+# module "subnet-nat-gw_association" {
+#   source = "../../modules/azurerm_subnet-nat-gw_association"
 
-  subnet_id      = module.azurerm_subnet[var.subnet-nat-gw].subnet_ids.id
-  nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
-}
+#   subnet_id      = module.azurerm_subnet[var.subnet-nat-gw].subnet_ids.id
+#   nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
+# }
 
 module "azurerm_user_assigned_identity" {
   source = "../../modules/azurerm_managed_identity"
@@ -79,6 +79,20 @@ module "azurerm_container_registry" {
   sku                     = "Basic"
   admin_enabled           = false
   tags                    = local.common_tags
+}
+
+module "azurerm_application_gateway" {
+  source = "../../modules/azurerm_application_gateway"
+
+  name                = "${local.name_prefix}-appgw"
+  location            = local.region
+  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  sku_name            = "Standard_v2"
+  sku_tier            = "Standard_v2"
+  subnet_id           = module.azurerm_subnet[var.subnet-appgw].subnet_ids.id
+  tags                = local.common_tags
 }
 
 # module "azurerm_kubernetes_cluster" {
