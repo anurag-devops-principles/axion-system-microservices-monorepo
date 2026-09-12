@@ -50,6 +50,16 @@ variable "max_surge" {
   default     = "10%"
 }
 
+variable "default_node_pool_subnet_id" {
+  description = "The ID of the subnet to place the default node pool nodes in."
+  type        = string
+}
+
+variable "ingress_application_gateway_id" {
+  description = "The resource ID of an existing Application Gateway to use as the ingress controller (AGIC)."
+  type        = string
+}
+
 variable "node_provisioning_profile_default_node_pools" {
   description = "The default node pools for the node provisioning profile."
   type        = string
@@ -65,7 +75,11 @@ variable "node_provisioning_profile_mode" {
 variable "identity_type" {
   description = "The type of identity used for the AKS cluster (e.g., SystemAssigned, UserAssigned, None)."
   type        = string
-  default     = "SystemAssigned"
+}
+
+variable "user_assigned_identity_id" {
+  description = "The resource ID of the user-assigned identity to use for the AKS cluster."
+  type        = string
 }
 
 variable "tags" {

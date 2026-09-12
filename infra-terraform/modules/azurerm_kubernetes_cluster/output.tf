@@ -1,5 +1,5 @@
-output "kubernetes_cluster" {
-  description = "The created AKS cluster."
+output "kubernetes_cluster_ids" {
+  description = "Key outputs from the AKS resource"
   value = {
     id                  = azurerm_kubernetes_cluster.aks_cluster.id
     name                = azurerm_kubernetes_cluster.aks_cluster.name

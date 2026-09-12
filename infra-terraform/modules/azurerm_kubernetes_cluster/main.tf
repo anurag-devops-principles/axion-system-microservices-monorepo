@@ -6,10 +6,11 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   node_resource_group = var.node_resource_group_name
 
   default_node_pool {
-    name       = var.default_node_pool_name
-    node_count = var.default_node_pool_node_count
-    vm_size    = var.default_node_pool_vm_size
-    type       = var.default_node_pool_type
+    name           = var.default_node_pool_name
+    node_count     = var.default_node_pool_node_count
+    vm_size        = var.default_node_pool_vm_size
+    type           = var.default_node_pool_type
+    vnet_subnet_id = var.default_node_pool_subnet_id
 
     upgrade_settings {
       max_surge = var.max_surge
@@ -22,7 +23,13 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   identity {
-    type = var.identity_type
+    type         = var.identity_type
+    identity_ids = [var.user_assigned_identity_id]
   }
+
+  ingress_application_gateway {
+    gateway_id = var.ingress_application_gateway_id
+  }
+
   tags = var.tags
 }

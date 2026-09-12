@@ -1,4 +1,4 @@
-output "container_registry" {
+output "container_registry_ids" {
   description = "The created Azure Container Registry."
   value = {
     id           = azurerm_container_registry.container_registry.id

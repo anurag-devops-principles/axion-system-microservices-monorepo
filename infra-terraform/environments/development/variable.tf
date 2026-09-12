@@ -6,20 +6,22 @@ variable "subnets" {
   }))
 }
 
-variable "subnet-nsg" {
+variable "aks_subnet" {
   type        = string
   description = "Key of the subnet (from var.subnets) to associate with the NSG (e.g. subnet_1)"
   default     = "subnet_1"
 }
 
-variable "subnet-nat-gw" {
+variable "appgw_subnet" {
   type        = string
-  description = "Key of the subnet (from var.subnets) to associate with the NAT gateway (e.g. subnet_1)"
-  default     = "subnet_1"
+  description = "Key of the subnet (from var.subnets) to associate with the application gateway (e.g. subnet_2)"
+  default     = "subnet_2"
 }
 
-variable "subnet-appgw" {
-  type        = string
-  description = "Key of the subnet (from var.subnets) to associate with the application gateway (e.g. subnet_1)"
-  default     = "subnet_2"
+variable "role_assignment" {
+  type = map(object({
+    scope                 = string
+    role_defionation_name = string
+  }))
+  description = "Map of role assignments"
 }

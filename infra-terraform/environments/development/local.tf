@@ -16,3 +16,10 @@ locals {
     "managed-by"  = local.managed_by
   }
 }
+
+locals {
+  scope = {
+    "acr"   = module.azurerm_container_registry.container_registry_ids.id
+    "appgw" = module.azurerm_application_gateway.appgw_ids.id
+  }
+}

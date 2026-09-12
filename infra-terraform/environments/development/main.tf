@@ -39,7 +39,7 @@ module "azurerm_network_security" {
 module "subnet-nsg_association" {
   source = "../../modules/azurerm_subnet-nsg_association"
 
-  subnet_id                 = module.azurerm_subnet[var.subnet-nsg].subnet_ids.id
+  subnet_id                 = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
   network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
@@ -57,7 +57,7 @@ module "subnet-nsg_association" {
 # module "subnet-nat-gw_association" {
 #   source = "../../modules/azurerm_subnet-nat-gw_association"
 
-#   subnet_id      = module.azurerm_subnet[var.subnet-nat-gw].subnet_ids.id
+#   subnet_id      = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
 #   nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
 # }
 
@@ -91,29 +91,37 @@ module "azurerm_application_gateway" {
   sku                 = "Standard"
   sku_name            = "Standard_v2"
   sku_tier            = "Standard_v2"
-  subnet_id           = module.azurerm_subnet[var.subnet-appgw].subnet_ids.id
+  subnet_id           = module.azurerm_subnet[var.appgw_subnet].subnet_ids.id
   tags                = local.common_tags
 }
 
-# module "azurerm_kubernetes_cluster" {
-#   source = "../../modules/azurerm_kubernetes_cluster"
+module "azurerm_kubernetes_cluster" {
+  source = "../../modules/azurerm_kubernetes_cluster"
 
-#   aks_cluster_name             = "${local.name_prefix}-aks"
-#   resource_group_name          = module.azurerm_resource_group.resource_group_ids.name
-#   location                     = module.azurerm_resource_group.resource_group_ids.location
-#   dns_prefix                   = "${local.name_prefix}-aks"
-#   default_node_pool_name       = "default"
-#   default_node_pool_node_count = 1
-#   default_node_pool_vm_size    = "Standard_B2s"
-#   default_node_pool_type       = "VirtualMachineScaleSets"
-#   identity_type                = "SystemAssigned"
-#   tags                         = local.common_tags
-# }
+  aks_cluster_name                             = "${local.name_prefix}-aks"
+  resource_group_name                          = module.azurerm_resource_group.resource_group_ids.name
+  location                                     = module.azurerm_resource_group.resource_group_ids.location
+  dns_prefix                                   = "${local.name_prefix}-aks"
+  default_node_pool_name                       = "system-pool"
+  default_node_pool_node_count                 = 1
+  default_node_pool_vm_size                    = "Standard_B2s"
+  default_node_pool_type                       = "VirtualMachineScaleSets"
+  default_node_pool_subnet_id                  = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
+  max_surge                                    = "33%"
+  node_provisioning_profile_default_node_pools = "Auto"
+  node_provisioning_profile_mode               = "Manual"
+  identity_type                                = "UserAssigned"
+  user_assigned_identity_id                    = module.azurerm_user_assigned_identity.uami_ids.id
+  ingress_application_gateway_id               = module.azurerm_application_gateway.appgw_ids.id
+  tags                                         = local.common_tags
+}
 
-# module "azurerm_role_assignment" {
-#   source = "../../modules/azurerm_role_assignment"
+module "azurerm_role_assignment" {
+  source = "../../modules/azurerm_role_assignment"
 
-#   scope                = module.azurerm_container_registry.container_registry.id
-#   role_definition_name = "ACRPull"
-#   principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster.kubelet_object_id
-# }
+  for_each = var.role_assignment
+
+  scope                = local.scope[each.value.scope]
+  role_definition_name = each.value.role_defionation_name
+  principal_id         = module.azurerm_user_assigned_identity.uami_ids.principal_id
+}

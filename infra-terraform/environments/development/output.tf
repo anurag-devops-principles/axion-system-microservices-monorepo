@@ -31,12 +31,16 @@ output "user_assigned_identity_ids" {
 }
 
 output "container_registry" {
-  value = module.azurerm_container_registry.container_registry
+  value = module.azurerm_container_registry.container_registry_ids
 }
 
-# output "kubernetes_cluster" {
-#   value = module.azurerm_kubernetes_cluster.kubernetes_cluster
-# }
+output "appgw_ids" {
+  value = module.azurerm_application_gateway.appgw_ids
+}
+
+output "kubernetes_cluster" {
+  value = module.azurerm_kubernetes_cluster.kubernetes_cluster_ids
+}
 
 # output "role_assignment_id" {
 #   value = module.azurerm_role_assignment.role_assignment
