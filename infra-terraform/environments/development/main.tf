@@ -61,16 +61,25 @@ module "subnet-nat-gw_association" {
   nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
 }
 
-# module "azurerm_container_registry" {
-#   source = "../../modules/azurerm_container_registry"
+module "azurerm_user_assigned_identity" {
+  source = "../../modules/azurerm_managed_identity"
 
-#   container_registry_name = replace("${local.name_prefix}-acr", "-", "") # Remove hyphens for ACR name
-#   resource_group_name     = module.azurerm_resource_group.resource_group_ids.name
-#   location                = module.azurerm_resource_group.resource_group_ids.location
-#   sku                     = "Standard"
-#   admin_enabled           = false
-#   tags                    = local.common_tags
-# }
+  uami_name           = "${local.name_prefix}-uami"
+  location            = local.region
+  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
+  tags                = local.common_tags
+}
+
+module "azurerm_container_registry" {
+  source = "../../modules/azurerm_container_registry"
+
+  container_registry_name = replace("${local.name_prefix}-acr", "-", "") # Remove hyphens for ACR name
+  resource_group_name     = module.azurerm_resource_group.resource_group_ids.name
+  location                = module.azurerm_resource_group.resource_group_ids.location
+  sku                     = "Basic"
+  admin_enabled           = false
+  tags                    = local.common_tags
+}
 
 # module "azurerm_kubernetes_cluster" {
 #   source = "../../modules/azurerm_kubernetes_cluster"

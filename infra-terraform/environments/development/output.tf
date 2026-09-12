@@ -26,9 +26,13 @@ output "subnet_nat_gw_association_ids" {
   value = module.subnet-nat-gw_association.subnet_nat_gw_association_ids
 }
 
-# output "container_registry" {
-#   value = module.azurerm_container_registry.container_registry
-# }
+output "user_assigned_identity_ids" {
+  value = module.azurerm_user_assigned_identity.uami_ids
+}
+
+output "container_registry" {
+  value = module.azurerm_container_registry.container_registry
+}
 
 # output "kubernetes_cluster" {
 #   value = module.azurerm_kubernetes_cluster.kubernetes_cluster
