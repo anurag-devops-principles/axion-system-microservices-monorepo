@@ -17,3 +17,8 @@ variable "address_space" {
   type        = list(string)
   description = "Address space of the virtual network"
 }
+
+variable "tags" {
+  type        = map(string)
+  description = "Tags to apply to the virtual network"
+}

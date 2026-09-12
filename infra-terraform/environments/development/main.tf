@@ -13,6 +13,7 @@ module "azurerm_virtual_network" {
   region               = local.region
   resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
   address_space        = ["10.10.0.0/16"]
+  tags                 = local.common_tags
 }
 
 module "azurerm_subnet" {
@@ -24,6 +25,22 @@ module "azurerm_subnet" {
   resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
   address_prefixes     = each.value.address_prefixes
   virtual_network_name = module.azurerm_virtual_network.virtual_network_ids.name
+}
+
+module "azurerm_network_security" {
+  source = "../../modules/azurerm_network_security"
+
+  network_security_group_name = "${local.name_prefix}-nsg"
+  location                    = local.region
+  resource_group_name         = module.azurerm_resource_group.resource_group_ids.name
+  tags                        = local.common_tags
+}
+
+module "subnet-nsg_association" {
+  source = "../../modules/azurerm_subnet-nsg_association"
+
+  subnet_id                 = module.azurerm_subnet[var.subnet-nsg].subnet_ids.id
+  network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
 # module "azurerm_container_registry" {

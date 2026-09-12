@@ -8,3 +8,5 @@ subnets = {
     address_prefixes = ["10.10.2.0/24"]
   }
 }
+
+subnet-nsg = "subnet_1"

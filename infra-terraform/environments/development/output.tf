@@ -10,14 +10,22 @@ output "subnet_ids" {
   value = { for k, v in module.azurerm_subnet : k => v.subnet_ids }
 }
 
-output "container_registry" {
-  value = module.azurerm_container_registry.container_registry
+output "network_security_group_ids" {
+  value = module.azurerm_network_security.nsg_ids
 }
 
-output "kubernetes_cluster" {
-  value = module.azurerm_kubernetes_cluster.kubernetes_cluster
+output "subnet_nsg_association_ids" {
+  value = module.subnet-nsg_association.subnet_nsg_association_ids
 }
 
-output "role_assignment_id" {
-  value = module.azurerm_role_assignment.role_assignment
-}
+# output "container_registry" {
+#   value = module.azurerm_container_registry.container_registry
+# }
+
+# output "kubernetes_cluster" {
+#   value = module.azurerm_kubernetes_cluster.kubernetes_cluster
+# }
+
+# output "role_assignment_id" {
+#   value = module.azurerm_role_assignment.role_assignment
+# }

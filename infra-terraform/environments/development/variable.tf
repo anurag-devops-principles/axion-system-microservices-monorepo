@@ -5,3 +5,8 @@ variable "subnets" {
     address_prefixes = list(string)
   }))
 }
+
+variable "subnet-nsg" {
+  type        = string
+  description = "Key of the subnet (from var.subnets) to associate with the NSG (e.g. subnet_1)"
+}
