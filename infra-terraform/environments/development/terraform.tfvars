@@ -11,11 +11,11 @@ subnets = {
 
 role_assignment = {
   role_1 = {
-    scope                 = "acr"
-    role_defionation_name = "AcrPull"
+    scope                = "acr"
+    role_defination_name = "AcrPull"
   }
   role_2 = {
-    scope                 = "appgw"
-    role_defionation_name = "Contributor"
+    scope                = "appgw"
+    role_defination_name = "Contributor"
   }
 }

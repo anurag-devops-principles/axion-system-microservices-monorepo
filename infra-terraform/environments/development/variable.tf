@@ -20,8 +20,8 @@ variable "appgw_subnet" {
 
 variable "role_assignment" {
   type = map(object({
-    scope                 = string
-    role_defionation_name = string
+    scope                = string
+    role_defination_name = string
   }))
   description = "Map of role assignments"
 }

@@ -24,7 +24,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
   identity {
     type         = var.identity_type
-    identity_ids = [var.user_assigned_identity_id]
+    identity_ids = var.identity_type == "UserAssigned" ? [var.user_assigned_identity_id] : null
   }
 
   ingress_application_gateway {

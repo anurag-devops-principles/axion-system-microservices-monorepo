@@ -42,6 +42,6 @@ output "kubernetes_cluster" {
   value = module.azurerm_kubernetes_cluster.kubernetes_cluster_ids
 }
 
-# output "role_assignment_id" {
-#   value = module.azurerm_role_assignment.role_assignment
-# }
+output "role_assignment_id" {
+  value = { for k, v in module.azurerm_role_assignment : k => v.role_assignment }
+}

@@ -102,6 +102,7 @@ module "azurerm_kubernetes_cluster" {
   resource_group_name                          = module.azurerm_resource_group.resource_group_ids.name
   location                                     = module.azurerm_resource_group.resource_group_ids.location
   dns_prefix                                   = "${local.name_prefix}-aks"
+  node_resource_group_name                     = "${local.name_prefix}-aks-MC"
   default_node_pool_name                       = "system-pool"
   default_node_pool_node_count                 = 1
   default_node_pool_vm_size                    = "Standard_B2s"
@@ -122,6 +123,6 @@ module "azurerm_role_assignment" {
   for_each = var.role_assignment
 
   scope                = local.scope[each.value.scope]
-  role_definition_name = each.value.role_defionation_name
+  role_definition_name = each.value.role_defination_name
   principal_id         = module.azurerm_user_assigned_identity.uami_ids.principal_id
 }
