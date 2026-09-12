@@ -43,6 +43,24 @@ module "subnet-nsg_association" {
   network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
+module "azurerm_nat_gateway" {
+  source = "../../modules/azurerm_nat_gateway"
+
+  name                = "${local.name_prefix}-nat-gateway"
+  location            = local.region
+  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = local.common_tags
+}
+
+module "subnet-nat-gw_association" {
+  source = "../../modules/azurerm_subnet-nat-gw_association"
+
+  subnet_id      = module.azurerm_subnet[var.subnet-nat-gw].subnet_ids.id
+  nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
+}
+
 # module "azurerm_container_registry" {
 #   source = "../../modules/azurerm_container_registry"
 
