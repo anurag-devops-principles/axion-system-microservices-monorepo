@@ -45,15 +45,6 @@ module "subnet-nat-gw_association" {
   nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
 }
 
-module "azurerm_user_assigned_identity" {
-  source = "../../modules/azurerm_managed_identity"
-
-  uami_name           = "${local.name_prefix}-uami"
-  location            = local.region
-  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
-  tags                = local.common_tags
-}
-
 module "azurerm_container_registry" {
   source = "../../modules/azurerm_container_registry"
 
@@ -102,8 +93,7 @@ module "azurerm_kubernetes_cluster" {
   dns_service_ip                               = var.dns_service_ip
   node_provisioning_profile_default_node_pools = "Auto"
   node_provisioning_profile_mode               = "Manual"
-  identity_type                                = "UserAssigned"
-  user_assigned_identity_id                    = module.azurerm_user_assigned_identity.uami_ids.id
+  identity_type                                = "SystemAssigned"
   ingress_application_gateway_id               = module.azurerm_application_gateway.appgw_ids.id
   tags                                         = local.common_tags
 

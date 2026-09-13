@@ -110,6 +110,7 @@ variable "node_provisioning_profile_mode" {
 variable "identity_type" {
   description = "The type of identity used for the AKS cluster (e.g., SystemAssigned, UserAssigned, None)."
   type        = string
+  default     = "SystemAssigned"
 }
 
 variable "user_assigned_identity_id" {

@@ -18,12 +18,6 @@ output "nat_gateway_ids" {
   value       = module.azurerm_nat_gateway.nat_gateway_ids
 }
 
-output "user_assigned_identity_ids" {
-  description = "User-assigned managed identity ID, name, and principal ID"
-  sensitive   = true
-  value       = module.azurerm_user_assigned_identity.uami_ids
-}
-
 output "container_registry_ids" {
   description = "Container registry ID, login server, and name"
   value       = module.azurerm_container_registry.container_registry_ids
