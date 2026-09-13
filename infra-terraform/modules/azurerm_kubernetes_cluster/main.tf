@@ -17,6 +17,16 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     }
   }
 
+  network_profile {
+    network_plugin      = var.network_plugin
+    network_plugin_mode = var.network_plugin_mode
+    network_policy      = var.network_policy
+    outbound_type       = var.outbound_type
+    pod_cidr            = var.pod_cidr
+    service_cidr        = var.service_cidr
+    dns_service_ip      = var.dns_service_ip
+  }
+
   node_provisioning_profile {
     default_node_pools = var.node_provisioning_profile_default_node_pools
     mode               = var.node_provisioning_profile_mode

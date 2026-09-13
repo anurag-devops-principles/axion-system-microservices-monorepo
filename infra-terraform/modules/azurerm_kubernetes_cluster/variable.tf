@@ -55,6 +55,41 @@ variable "default_node_pool_subnet_id" {
   type        = string
 }
 
+variable "network_plugin" {
+  description = "The network plugin to use for the AKS cluster."
+  type        = string
+}
+
+variable "network_plugin_mode" {
+  description = "The network plugin mode to use for the AKS cluster."
+  type        = string
+}
+
+variable "network_policy" {
+  description = "The network policy to use for the AKS cluster."
+  type        = string
+}
+
+variable "outbound_type" {
+  description = "The outbound type to use for the AKS cluster."
+  type        = string
+}
+
+variable "pod_cidr" {
+  description = "The pod CIDR to use for the AKS cluster."
+  type        = string
+}
+
+variable "service_cidr" {
+  description = "The service CIDR to use for the AKS cluster."
+  type        = string
+}
+
+variable "dns_service_ip" {
+  description = "The DNS service IP to use for the AKS cluster."
+  type        = string
+}
+
 variable "ingress_application_gateway_id" {
   description = "The resource ID of an existing Application Gateway to use as the ingress controller (AGIC)."
   type        = string

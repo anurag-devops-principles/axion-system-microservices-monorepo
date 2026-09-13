@@ -43,23 +43,23 @@ module "subnet-nsg_association" {
   network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
-# module "azurerm_nat_gateway" {
-#   source = "../../modules/azurerm_nat_gateway"
+module "azurerm_nat_gateway" {
+  source = "../../modules/azurerm_nat_gateway"
 
-#   name                = "${local.name_prefix}-nat-gateway"
-#   location            = local.region
-#   resource_group_name = module.azurerm_resource_group.resource_group_ids.name
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
-#   tags                = local.common_tags
-# }
+  name                = "${local.name_prefix}-nat-gateway"
+  location            = local.region
+  resource_group_name = module.azurerm_resource_group.resource_group_ids.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = local.common_tags
+}
 
-# module "subnet-nat-gw_association" {
-#   source = "../../modules/azurerm_subnet-nat-gw_association"
+module "subnet-nat-gw_association" {
+  source = "../../modules/azurerm_subnet-nat-gw_association"
 
-#   subnet_id      = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
-#   nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
-# }
+  subnet_id      = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
+  nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
+}
 
 module "azurerm_user_assigned_identity" {
   source = "../../modules/azurerm_managed_identity"
@@ -109,6 +109,13 @@ module "azurerm_kubernetes_cluster" {
   default_node_pool_type                       = "VirtualMachineScaleSets"
   default_node_pool_subnet_id                  = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
   max_surge                                    = "33%"
+  network_plugin                               = "azure"
+  network_plugin_mode                          = "overlay"
+  network_policy                               = "azure"
+  outbound_type                                = "loadBalancer"
+  pod_cidr                                     = "10.244.0.0/16"
+  service_cidr                                 = "10.0.0.0/16"
+  dns_service_ip                               = "10.0.0.10"
   node_provisioning_profile_default_node_pools = "Auto"
   node_provisioning_profile_mode               = "Manual"
   identity_type                                = "UserAssigned"
