@@ -31,11 +31,3 @@ module "azurerm_kubernetes_cluster" {
   identity_type                = "SystemAssigned"
   tags                         = local.common_tags
 }
-
-module "azurerm_role_assignment" {
-  source = "../../modules/azurerm_role_assignment"
-
-  scope                = module.azurerm_container_registry.container_registry.id
-  role_definition_name = "ACRPull"
-  principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster.kubelet_object_id
-}
