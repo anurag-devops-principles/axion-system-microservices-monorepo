@@ -29,3 +29,9 @@ variable "tags" {
   description = "Tags to apply to the NAT gateway"
   default     = {}
 }
+
+variable "subnet_id" {
+  type        = string
+  description = "ID of the subnet to associate with the NAT gateway"
+  default     = null
+}

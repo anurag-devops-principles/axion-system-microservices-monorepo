@@ -33,16 +33,8 @@ module "azurerm_nat_gateway" {
   name                = "${local.name_prefix}-nat-gateway"
   location            = local.region
   resource_group_name = module.azurerm_resource_group.resource_group_ids.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  subnet_id           = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
   tags                = local.common_tags
-}
-
-module "subnet-nat-gw_association" {
-  source = "../../modules/azurerm_subnet-nat-gw_association"
-
-  subnet_id      = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
-  nat_gateway_id = module.azurerm_nat_gateway.nat_gateway_ids.id
 }
 
 module "azurerm_container_registry" {
@@ -97,7 +89,7 @@ module "azurerm_kubernetes_cluster" {
   ingress_application_gateway_id               = module.azurerm_application_gateway.appgw_ids.id
   tags                                         = local.common_tags
 
-  depends_on = [module.subnet-nat-gw_association]
+  depends_on = [module.azurerm_nat_gateway]
 }
 
 # AKS kubelet identity needs AcrPull to pull images from the container registry
