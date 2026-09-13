@@ -56,8 +56,10 @@ resource "azurerm_application_gateway" "appgw" {
   request_routing_rule {
     name                       = "${var.name}-rqrt"
     rule_type                  = "Basic"
+    priority                   = 100
     http_listener_name         = "${var.name}-httplstn"
     backend_address_pool_name  = "${var.name}-beap"
     backend_http_settings_name = "${var.name}-be-htst"
   }
+  tags = var.tags
 }

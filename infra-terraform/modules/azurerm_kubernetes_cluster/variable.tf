@@ -115,6 +115,7 @@ variable "identity_type" {
 variable "user_assigned_identity_id" {
   description = "The resource ID of the user-assigned identity to use for the AKS cluster."
   type        = string
+  default     = null
 }
 
 variable "tags" {

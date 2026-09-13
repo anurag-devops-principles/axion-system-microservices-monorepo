@@ -8,14 +8,3 @@ subnets = {
     address_prefixes = ["10.10.2.0/24"]
   }
 }
-
-role_assignment = {
-  role_1 = {
-    scope                = "acr"
-    role_defination_name = "AcrPull"
-  }
-  role_2 = {
-    scope                = "appgw"
-    role_defination_name = "Contributor"
-  }
-}

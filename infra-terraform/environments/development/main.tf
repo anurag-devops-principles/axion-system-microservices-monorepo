@@ -12,7 +12,7 @@ module "azurerm_virtual_network" {
   virtual_network_name = "${local.name_prefix}-vnet"
   region               = local.region
   resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
-  address_space        = ["10.10.0.0/16"]
+  address_space        = var.vnet_address_space
   tags                 = local.common_tags
 }
 
@@ -25,22 +25,6 @@ module "azurerm_subnet" {
   resource_group_name  = module.azurerm_resource_group.resource_group_ids.name
   address_prefixes     = each.value.address_prefixes
   virtual_network_name = module.azurerm_virtual_network.virtual_network_ids.name
-}
-
-module "azurerm_network_security" {
-  source = "../../modules/azurerm_network_security"
-
-  network_security_group_name = "${local.name_prefix}-nsg"
-  location                    = local.region
-  resource_group_name         = module.azurerm_resource_group.resource_group_ids.name
-  tags                        = local.common_tags
-}
-
-module "subnet-nsg_association" {
-  source = "../../modules/azurerm_subnet-nsg_association"
-
-  subnet_id                 = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
-  network_security_group_id = module.azurerm_network_security.nsg_ids.id
 }
 
 module "azurerm_nat_gateway" {
@@ -76,7 +60,7 @@ module "azurerm_container_registry" {
   container_registry_name = replace("${local.name_prefix}-acr", "-", "") # Remove hyphens for ACR name
   resource_group_name     = module.azurerm_resource_group.resource_group_ids.name
   location                = module.azurerm_resource_group.resource_group_ids.location
-  sku                     = "Basic"
+  sku                     = var.acr_sku
   admin_enabled           = false
   tags                    = local.common_tags
 }
@@ -103,33 +87,52 @@ module "azurerm_kubernetes_cluster" {
   location                                     = module.azurerm_resource_group.resource_group_ids.location
   dns_prefix                                   = "${local.name_prefix}-aks"
   node_resource_group_name                     = "${local.name_prefix}-aks-MC"
-  default_node_pool_name                       = "system-pool"
-  default_node_pool_node_count                 = 1
-  default_node_pool_vm_size                    = "Standard_B2s"
+  default_node_pool_name                       = "systempool"
+  default_node_pool_node_count                 = var.aks_node_count
+  default_node_pool_vm_size                    = var.aks_vm_size
   default_node_pool_type                       = "VirtualMachineScaleSets"
   default_node_pool_subnet_id                  = module.azurerm_subnet[var.aks_subnet].subnet_ids.id
   max_surge                                    = "33%"
   network_plugin                               = "azure"
   network_plugin_mode                          = "overlay"
   network_policy                               = "azure"
-  outbound_type                                = "loadBalancer"
-  pod_cidr                                     = "10.244.0.0/16"
-  service_cidr                                 = "10.0.0.0/16"
-  dns_service_ip                               = "10.0.0.10"
+  outbound_type                                = "userAssignedNATGateway"
+  pod_cidr                                     = var.pod_cidr
+  service_cidr                                 = var.service_cidr
+  dns_service_ip                               = var.dns_service_ip
   node_provisioning_profile_default_node_pools = "Auto"
   node_provisioning_profile_mode               = "Manual"
   identity_type                                = "UserAssigned"
   user_assigned_identity_id                    = module.azurerm_user_assigned_identity.uami_ids.id
   ingress_application_gateway_id               = module.azurerm_application_gateway.appgw_ids.id
   tags                                         = local.common_tags
+
+  depends_on = [module.subnet-nat-gw_association]
 }
 
-module "azurerm_role_assignment" {
+# AKS kubelet identity needs AcrPull to pull images from the container registry
+module "aks_acr_pull" {
   source = "../../modules/azurerm_role_assignment"
 
-  for_each = var.role_assignment
+  scope                = module.azurerm_container_registry.container_registry_ids.id
+  role_definition_name = "AcrPull"
+  principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster_ids.kubelet_object_id
+}
 
-  scope                = local.scope[each.value.scope]
-  role_definition_name = each.value.role_defination_name
-  principal_id         = module.azurerm_user_assigned_identity.uami_ids.principal_id
+# AGIC identity requires Contributor on the App Gateway to manage routing rules
+module "agic_appgw_contributor" {
+  source = "../../modules/azurerm_role_assignment"
+
+  scope                = module.azurerm_application_gateway.appgw_ids.id
+  role_definition_name = "Contributor"
+  principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster_ids.agic_identity_object_id
+}
+
+# AGIC identity requires Reader on the Resource Group to list and discover resources
+module "agic_rg_reader" {
+  source = "../../modules/azurerm_role_assignment"
+
+  scope                = module.azurerm_resource_group.resource_group_ids.id
+  role_definition_name = "Reader"
+  principal_id         = module.azurerm_kubernetes_cluster.kubernetes_cluster_ids.agic_identity_object_id
 }

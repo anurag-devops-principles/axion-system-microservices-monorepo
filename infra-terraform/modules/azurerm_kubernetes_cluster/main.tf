@@ -42,4 +42,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   tags = var.tags
+
+  oidc_issuer_enabled = true
 }
